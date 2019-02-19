@@ -102,6 +102,7 @@ private slots:
 //    void populateJavaScriptWindowObject();
     //Tranceiver
     void onTranceiverData(QString);
+    void onTranceiverDataLI(QString);
     void onTempAndHum(QString);
     void onTempAndHum1(QString);
     void oncompleteLux(QString);
@@ -138,6 +139,7 @@ private slots:
     void sendBroadcast();
     void onTempHumi(int, double, double);
     void onLR(int);
+    void test();
     void onLux_t(int, double);
     //Graph
     void makePlot();

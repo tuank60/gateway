@@ -110,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(lora, SIGNAL(workRequestedLR()), thread_lora, SLOT(start()));
     connect(thread_lora,SIGNAL(started()),lora,SLOT(doWorkLR()));
     connect(lora, SIGNAL(receivedDataLR(QString)), SLOT(onTranceiverData(QString)));
+    connect(lora, SIGNAL(receivedDataLR(QString)), SLOT(onTranceiverDataLI(QString)));
     connect(lora, SIGNAL(tempAndHum(QString)), SLOT(onTempAndHumLR(QString)));
     connect(lora, SIGNAL(sendTandH(int,double,double)), SLOT(sendMqttTandHLR(int,double,double)));
 
@@ -161,18 +162,11 @@ MainWindow::MainWindow(QWidget *parent) :
     lib_init();
     mqttConnect();
     qDebug()<<"okoko";
-
-    //qDebug()<<x.GPS_BAUDRATE_DEFAULT;
-//    QFile file("/home/nghiemdinhhao/Desktop/gateway/Pi-OBUSoftware/build/WSAN/thresol.txt");
-//    //QString line;
-//    file.open(QIODevice::ReadWrite);
-//        QTextStream stream(&file);
-//            DATA::temp_t = stream.readLine().toDouble();
-//            qDebug()<<DATA::temp_t;
-//            DATA::hump_t=stream.readLine().toDouble();
-//            DATA::lux_t=stream.readLine().toDouble();
-
-//    file.close();
+    //test();
+    //sendMqttTandHLR(10,22.912,79.802);
+    //sendMqttTandH(11,10.6,5.66);
+    //onTranceiverData("ON LIGHTS");
+    //sendMqttLux(11,150);
 }
 // load output.txt
 
@@ -272,8 +266,10 @@ void MainWindow::sendMqttTandHLR(int mac,double temp,double humi)
     payload +=name;
     payload +="\": [{\"ts\":";
     payload +=QString::number(timestame);payload+="000,\"values\":";
-    payload += "{\"temperatureLR\":"; payload += QString::number(temp); payload += ",";
-    payload += "\"humidityLR\":"; payload += QString::number(humi);
+    payload += "{\"temperature\":"; payload += QString::number(temp); payload += ",";
+    payload += "\"threshold_temperature\":"; payload +=QString::number(DATA::temp_t); payload +=",";
+    payload += "\"humidity\":"; payload += QString::number(humi); payload +=",";
+    payload += "\"threshold_humidity\":"; payload +=QString::number(DATA::hump_t);
     payload += "}}]}";
 
 /*using tb-gateway*/
@@ -306,7 +302,9 @@ void MainWindow::sendMqttTandH(int mac,double temp,double humi)
     payload +="\": [{\"ts\":";
     payload +=QString::number(timestame);payload+="000,\"values\":";
     payload += "{\"temperature\":"; payload += QString::number(temp); payload += ",";
-    payload += "\"humidity\":"; payload += QString::number(humi);
+    payload += "\"threshold_temperature\":"; payload +=QString::number(DATA::temp_t); payload +=",";
+    payload += "\"humidity\":"; payload += QString::number(humi); payload +=",";
+    payload += "\"threshold_humidity\":"; payload +=QString::number(DATA::hump_t);
     payload += "}}]}";
 
 /*using tb-gateway*/
@@ -338,7 +336,8 @@ void MainWindow::sendMqttLux(int mac,double lux)
     payload +=name;
     payload +="\": [{\"ts\":";
     payload +=QString::number(timestame);payload+="000,\"values\":";
-    payload += "{\"luminance\":"; payload += QString::number(lux);
+    payload += "{\"luminance\":"; payload += QString::number(lux); payload +=",";
+    payload += "\"threshold_luminance\":"; payload += QString::number(DATA::lux_t);
     payload += "}}]}";
     qDebug()<<payload<<endl;
     QByteArray datasend=payload.toLocal8Bit();
@@ -855,9 +854,148 @@ int MainWindow::getIndexMarker(int mac)
 //Tranceiver
 void MainWindow::onTranceiverData(QString data)
 {
-    console->insertPlainText(data);
+
     //console->printData(data);
     console->moveCursor(QTextCursor::End);
+    QString PUMP;
+    QString time_format = "yyyy-MM-dd  HH:mm:ss";
+    QDateTime a = QDateTime::currentDateTime();
+    QString timestart = a.toString(time_format);
+    QDateTime b = a.addSecs(5*60);
+    QString timestop = b.toString(time_format);
+    if(data=="ON PUMP"){
+        PUMP="ON";
+    }
+    if(data=="OFF PUMP") {
+        PUMP="OFF";
+    }
+    if(data=="ON PUMP"||data=="OFF PUMP")
+    {
+        console->insertPlainText(data);
+        QString model="T1000";
+        QString name="PUMP";
+        QDateTime current = QDateTime::currentDateTime();
+        uint timestame = current.toTime_t();
+       // qDebug()<<timestame;
+        QString payload = "{\"";
+        payload +=name;
+        payload +="\": [{\"ts\":";
+        payload +=QString::number(timestame);payload+="000,\"values\":";
+        payload += "{\"Pump\":"; payload += PUMP;
+        payload += "}}]}";
+
+        qDebug()<<payload<<endl;
+        QByteArray datasend=payload.toLocal8Bit();
+        QByteArray topic= xx.topic2.toAscii();
+        mosq->publish(mosq->getMID(),topic.data(),datasend.size(),datasend.data(),2,false);
+        //console->insertPlainText("\nsent the lamp-pump data to the server!!! \r\n");
+    }
+    if(data=="ON PUMP")
+    {
+        QString model="T1000";
+        QString name="PUMP LOG";
+        //name.append(QString::number(mac));
+        //qDebug()<<name;
+        //nxt sua
+        QDateTime current = QDateTime::currentDateTime();
+        uint timestame = current.toTime_t();
+       // qDebug()<<timestame;
+        QString payload = "{\"";
+        payload +=name;
+        payload +="\": [{\"ts\":";
+        payload +=QString::number(timestame);payload+="000,\"values\":";
+        payload += "{\"Pump\":"; payload += PUMP; payload += ",";
+        payload += "\"Start_time\":"; payload +='"'; payload += timestart; payload +='"';payload +=",";
+        payload += "\"Stop_time\":"; payload +='"'; payload += timestop; payload +='"';
+        payload += "}}]}";
+
+    /*using tb-gateway*/
+    //    QString payload="{";
+    //        payload += "\"serialNumber\":\""; payload +=name ; payload += "\",";
+    //        payload += "\"temperature\":"; payload += QString::number(temp); payload += ",";
+    //        payload += "\"humidity\":"; payload += QString::number(humi); payload += ",";
+    //        payload += "\"model\":\""; payload += model;
+    //    payload+="\"}";
+
+        qDebug()<<payload<<endl;
+        QByteArray datasend=payload.toLocal8Bit();
+        QByteArray topic= xx.topic2.toAscii();
+        mosq->publish(mosq->getMID(),topic.data(),datasend.size(),datasend.data(),2,false);
+        console->insertPlainText("\nsent the lamp-pump data to the server!!! \r\n");
+    }
+}
+
+void MainWindow::onTranceiverDataLI(QString data)
+{
+
+    //console->printData(data);
+    console->moveCursor(QTextCursor::End);
+    QString LIGHT;
+    QString time_format = "yyyy-MM-dd  HH:mm:ss";
+    QDateTime a = QDateTime::currentDateTime();
+    QString timestart = a.toString(time_format);
+    QDateTime b = a.addSecs(5*60);
+    QString timestop = b.toString(time_format);
+    if(data=="ON LIGHT"){
+        LIGHT="ON";
+    }
+    if(data=="OFF LIGHT") {
+        LIGHT="OFF";
+    }
+    if(data=="ON LIGHT"||data=="OFF LIGHT")
+    {
+        console->insertPlainText(data);
+        QString model="T1000";
+        QString name="PUMP";
+        QDateTime current = QDateTime::currentDateTime();
+        uint timestame = current.toTime_t();
+       // qDebug()<<timestame;
+        QString payload = "{\"";
+        payload +=name;
+        payload +="\": [{\"ts\":";
+        payload +=QString::number(timestame);payload+="000,\"values\":";
+        payload += "{\"Light\":"; payload += LIGHT;
+        payload += "}}]}";
+
+        qDebug()<<payload<<endl;
+        QByteArray datasend=payload.toLocal8Bit();
+        QByteArray topic= xx.topic2.toAscii();
+        mosq->publish(mosq->getMID(),topic.data(),datasend.size(),datasend.data(),2,false);
+        //console->insertPlainText("\nsent the lamp-pump data to the server!!! \r\n");
+    }
+    if(data=="ON LIGHT")
+    {
+        QString model="T1000";
+        QString name="LIGHT LOG";
+        //name.append(QString::number(mac));
+        //qDebug()<<name;
+        //nxt sua
+        QDateTime current = QDateTime::currentDateTime();
+        uint timestame = current.toTime_t();
+       // qDebug()<<timestame;
+        QString payload = "{\"";
+        payload +=name;
+        payload +="\": [{\"ts\":";
+        payload +=QString::number(timestame);payload+="000,\"values\":";
+        payload += "{\"Light\":"; payload += LIGHT; payload += ",";
+        payload += "\"Start_time\":"; payload +='"'; payload += timestart; payload +='"';payload +=",";
+        payload += "\"Stop_time\":"; payload +='"'; payload += timestop; payload +='"';
+        payload += "}}]}";
+
+    /*using tb-gateway*/
+    //    QString payload="{";
+    //        payload += "\"serialNumber\":\""; payload +=name ; payload += "\",";
+    //        payload += "\"temperature\":"; payload += QString::number(temp); payload += ",";
+    //        payload += "\"humidity\":"; payload += QString::number(humi); payload += ",";
+    //        payload += "\"model\":\""; payload += model;
+    //    payload+="\"}";
+
+        qDebug()<<payload<<endl;
+        QByteArray datasend=payload.toLocal8Bit();
+        QByteArray topic= xx.topic2.toAscii();
+        mosq->publish(mosq->getMID(),topic.data(),datasend.size(),datasend.data(),2,false);
+        console->insertPlainText("\nsent the lamp-pump data to the server!!! \r\n");
+    }
 }
 
 void MainWindow::onTempAndHumLR(QString data)
@@ -1236,7 +1374,12 @@ void MainWindow::on_pushButton_clicked()
         {
             RetaskSensorDialog dialog(QString::number(mac), this);
             dialog.exec();
-        } else*/ sendCommand(mac, cmd);
+        } else*/
+    if (cmd<3){
+         sendCommand(mac, cmd);
+    }
+    else
+        onLR(cmd);
     }
 }
 
@@ -1650,6 +1793,11 @@ void MainWindow::on_btnSendLora_clicked()
 {
     int index = ui->boxCommand->currentIndex();
     onLR(index);
+    //sendMqttTandH(03,20.123,80.1111);
+    //sendMqttTandHLR(6,19.76,80.488);
+    //onTranceiverDataPU("ON PUMP");
+    //onTranceiverDataLI("ON PUMP");
+    //test();
 }
 
 void MainWindow::onLR(int index)
@@ -1682,4 +1830,43 @@ void MainWindow::onLR(int index)
     console->insertPlainText(tmp);
 }
 
+void MainWindow::test()
+{
 
+        QString model="T1000";
+        QString name="test";
+        //name.append(QString::number(mac));
+        //qDebug()<<name;
+        //nxt sua
+        QDateTime current = QDateTime::currentDateTime();
+        uint timestame = current.toTime_t();
+       // qDebug()<<timestame;
+        QString payload = "{\"";
+        payload +=name;
+        payload +="\": [{\"ts\":";
+        payload +=QString::number(timestame);payload+="000,\"values\":";
+        payload += "{\"method\":"; payload += "Led"; payload += ",";
+        //payload += "\"start_time\":"; payload += "\"2019-01-21 12:55:00\""; payload +=",";
+        payload += "\"params\":"; payload += "false";
+        payload += "}}]}";
+
+    /*using tb-gateway*/
+    //    QString payload="{";
+    //        payload += "\"serialNumber\":\""; payload +=name ; payload += "\",";
+    //        payload += "\"temperature\":"; payload += QString::number(temp); payload += ",";
+    //        payload += "\"humidity\":"; payload += QString::number(humi); payload += ",";
+    //        payload += "\"model\":\""; payload += model;
+    //    payload+="\"}";
+
+        qDebug()<<payload<<endl;
+        QByteArray datasend=payload.toLocal8Bit();
+        QByteArray topic= xx.topic2.toAscii();
+        mosq->publish(mosq->getMID(),topic.data(),datasend.size(),datasend.data(),2,false);
+        console->insertPlainText("vua gui du lieu nhiet do - do am len server!!! \r\n");
+}
+
+//void MainWindow::Lightest()
+//{
+//    QString model="T1000";
+//    QString name="M10";
+//}
