@@ -37,6 +37,8 @@ signals:
     void sendTandH(int,double,double);
     void completeLux(QString);
     void sendLux(int,double);
+    void sendMois(int);
+    void completeMois(QString);
     //
 
 public slots:

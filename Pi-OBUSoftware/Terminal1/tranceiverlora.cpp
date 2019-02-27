@@ -50,6 +50,7 @@ void tranceiverlora::WriteAppend(QString FileName, QString Image)
 int tranceiverlora::CheckCodeLora(QString code)
 {
     if(!code.compare("#LO")) return 1;
+    if(!code.compare("#L1")) return 2;
     return 0;
 }
 void tranceiverlora::writeData(QString cmd)
@@ -144,6 +145,15 @@ void tranceiverlora::readDataLR()
                         WriteTextAppend(x.HISTORY_FILE, data);
                         break;
                     }
+                case 2://Take Soil Moisture
+                    {
+                        bool ok;
+                        int Mois = Line.mid(3,2).toInt(&ok,10);
+                        QString tmp = QString::number(Mois);
+                        emit sendMois(Mois);
+
+                        emit completeMois(tmp);
+                }
                 default : break;
             }
                 j = 0;

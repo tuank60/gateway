@@ -30,15 +30,15 @@ static const uint qt_meta_data_configThreshold[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      17,   16,   16,   16, 0x08,
-      41,   16,   16,   16, 0x08,
+      16,   40,   40,   40, 0x08,
+      41,   40,   40,   40, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_configThreshold[] = {
-    "configThreshold\0\0on_btn_accept_clicked()\0"
-    "on_pushButton_2_clicked()\0"
+    "configThreshold\0on_btn_accept_clicked()\0"
+    "\0on_pushButton_2_clicked()\0"
 };
 
 void configThreshold::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)

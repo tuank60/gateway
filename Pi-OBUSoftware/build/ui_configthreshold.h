@@ -19,6 +19,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
 
 QT_BEGIN_NAMESPACE
 
@@ -39,6 +40,9 @@ public:
     QLabel *label_8;
     QPushButton *btn_accept;
     QPushButton *pushButton_2;
+    QLabel *label_9;
+    QLabel *label_10;
+    QSpinBox *dsb_mois;
 
     void setupUi(QDialog *configThreshold)
     {
@@ -67,13 +71,13 @@ public:
         dsb_Light->setGeometry(QRect(350, 80, 66, 23));
         label_3 = new QLabel(configThreshold);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(20, 80, 81, 21));
+        label_3->setGeometry(QRect(20, 80, 91, 21));
         label_4 = new QLabel(configThreshold);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(20, 140, 61, 21));
         label_5 = new QLabel(configThreshold);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(278, 80, 61, 20));
+        label_5->setGeometry(QRect(268, 80, 71, 20));
         label_6 = new QLabel(configThreshold);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(200, 80, 31, 21));
@@ -89,6 +93,15 @@ public:
         pushButton_2 = new QPushButton(configThreshold);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setGeometry(QRect(330, 260, 80, 22));
+        label_9 = new QLabel(configThreshold);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
+        label_9->setGeometry(QRect(430, 140, 21, 21));
+        label_10 = new QLabel(configThreshold);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+        label_10->setGeometry(QRect(250, 140, 91, 20));
+        dsb_mois = new QSpinBox(configThreshold);
+        dsb_mois->setObjectName(QString::fromUtf8("dsb_mois"));
+        dsb_mois->setGeometry(QRect(350, 140, 61, 21));
 
         retranslateUi(configThreshold);
 
@@ -108,6 +121,8 @@ public:
         label_8->setText(QApplication::translate("configThreshold", "Lux", 0, QApplication::UnicodeUTF8));
         btn_accept->setText(QApplication::translate("configThreshold", "Accept", 0, QApplication::UnicodeUTF8));
         pushButton_2->setText(QApplication::translate("configThreshold", "Cancel", 0, QApplication::UnicodeUTF8));
+        label_9->setText(QApplication::translate("configThreshold", "%", 0, QApplication::UnicodeUTF8));
+        label_10->setText(QApplication::translate("configThreshold", "Soil moisture", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

@@ -18,3 +18,6 @@ QString DATA::img = "";
 QString DATA::time = "";
 QString DATA::lux = "";
 double DATA::lux_t = 0;
+QString DATA::mois = "";
+int DATA::mois_t = 0;
+

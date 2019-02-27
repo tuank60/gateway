@@ -20,6 +20,8 @@ public:
     static QString time;
     static QString lux;
     static double lux_t;
+    static QString mois;
+    static int mois_t;
 
 };
 

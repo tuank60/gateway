@@ -244,13 +244,14 @@ public:
          << QApplication::translate("MainWindow", "OFF Pump", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "ON Light", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "OFF Light", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Take Soil Moisture", 0, QApplication::UnicodeUTF8)
         );
         label_4->setText(QApplication::translate("MainWindow", "Command", 0, QApplication::UnicodeUTF8));
         label_5->setText(QApplication::translate("MainWindow", "To", 0, QApplication::UnicodeUTF8));
         btnPrint->setText(QApplication::translate("MainWindow", "Print Text", 0, QApplication::UnicodeUTF8));
         btnOpenClose->setText(QApplication::translate("MainWindow", "Open", 0, QApplication::UnicodeUTF8));
         btnClear->setText(QApplication::translate("MainWindow", "Clear Screen", 0, QApplication::UnicodeUTF8));
-        btnConfigThreshol->setText(QApplication::translate("MainWindow", "Config Threshol", 0, QApplication::UnicodeUTF8));
+        btnConfigThreshol->setText(QApplication::translate("MainWindow", "Config Threshold", 0, QApplication::UnicodeUTF8));
         bt_Broadcast->setText(QApplication::translate("MainWindow", "Broadcast", 0, QApplication::UnicodeUTF8));
         btnSendLora->setText(QApplication::translate("MainWindow", "Send Lora", 0, QApplication::UnicodeUTF8));
         lb_pic->setText(QString());

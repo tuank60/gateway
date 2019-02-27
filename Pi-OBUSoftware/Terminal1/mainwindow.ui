@@ -176,6 +176,11 @@
         <string>OFF Light</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>Take Soil Moisture</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="boxSensor">
       <property name="geometry">
@@ -253,7 +258,7 @@
        <item>
         <widget class="QPushButton" name="btnConfigThreshol">
          <property name="text">
-          <string>Config Threshol</string>
+          <string>Config Threshold</string>
          </property>
         </widget>
        </item>

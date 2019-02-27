@@ -7,7 +7,7 @@ configThreshold::configThreshold(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QFile file("/home/tuan/gateway-haok0/Pi-OBUSoftware/build/WSAN/thresol.txt");
+    QFile file("/home/lab411/Desktop/gateway/Pi-OBUSoftware/build/WSAN/thresol.txt");
         QLabel *testLabel= new QLabel;
 
         QString line;
@@ -18,11 +18,14 @@ configThreshold::configThreshold(QWidget *parent) :
                 qDebug()<<DATA::temp_t;
                 DATA::hump_t=stream.readLine().toDouble();
                 DATA::lux_t=stream.readLine().toDouble();
+                DATA::mois_t=stream.readLine().toInt();
         }
         file.close();
         ui->dsb_Temp->setValue(DATA::temp_t);
         ui->dsb_Humi->setValue(DATA::hump_t);
         ui->dsb_Light->setValue(DATA::lux_t);
+        ui->dsb_mois->setValue(DATA::mois_t);
+
 }
 
 configThreshold::~configThreshold()
@@ -39,7 +42,8 @@ void configThreshold::on_btn_accept_clicked()
     //qDebug()<<DATA::hump_t;
     DATA::lux_t=ui->dsb_Light->value();
     //qDebug()<<DATA::lux_t;
-    QString filename = "/home/tuan/gateway-haok0/Pi-OBUSoftware/build/WSAN/thresol.txt";
+    DATA::mois_t=ui->dsb_mois->value();
+    QString filename = "/home/lab411/Desktop/gateway/Pi-OBUSoftware/build/WSAN/thresol.txt";
     QFile file( filename );
     if (file.open(QIODevice::ReadWrite)){
         QTextStream stream(&file);
@@ -47,6 +51,7 @@ void configThreshold::on_btn_accept_clicked()
         stream << DATA::temp_t << endl;
         stream << DATA::hump_t << endl;
         stream << DATA::lux_t << endl;
+        stream << DATA::mois_t << endl;
     }
 }
 

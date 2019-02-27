@@ -103,10 +103,12 @@ private slots:
     //Tranceiver
     void onTranceiverData(QString);
     void onTranceiverDataLI(QString);
+	void onreceivedDataLR(QString);
     void onTempAndHum(QString);
     void onTempAndHum1(QString);
     void oncompleteLux(QString);
     void onTempAndHumLR(QString);
+    void oncompleteMois(QString);
     //checkbox
     void onGpsStatus(bool);
     //Action
@@ -133,13 +135,14 @@ private slots:
     void sendMqttLux(int,double);
     void sendMqttTandHLR(int,double,double);
 
+    void sendMqttMois(int);
     //
     void sendImageToWeb(QString,QString);
     void GetDataWeb();
     void sendBroadcast();
     void onTempHumi(int, double, double);
     void onLR(int);
-    void test();
+
     void onLux_t(int, double);
     //Graph
     void makePlot();
